@@ -1,3 +1,4 @@
+import '@babel/polyfill';
 import Hello from './Hello';
 
 export default class Yolo {
@@ -7,6 +8,7 @@ export default class Yolo {
     run () {
         let a = new Hello('Mark');
 
-        a.sayHi();
+        a.sayHi('Hi Mark');
+        a.sayHiLater();
     }
 }

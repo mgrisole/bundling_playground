@@ -4,7 +4,11 @@ module.exports = function (api) {
         [
             "@babel/preset-env",
             {
-                "modules": false
+                targets: {
+                ie: 11,
+                browsers: 'last 2 versions'
+            },
+            useBuiltIns: 'usage'
             }
         ]
     ];
@@ -12,6 +16,7 @@ module.exports = function (api) {
 
   return {
     presets,
-    plugins
+    plugins,
+    ignore: [ 'node_modules' ]
   };
 }

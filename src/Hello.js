@@ -5,7 +5,15 @@ export default class Hello {
         this.name = name;
     }
 
-    sayHi () {
-        console.log(`Hi ${this.name} !`);
+    waitUntilSayHi() {
+        return new Promise(resolve => setTimeout(() => resolve(`Hi a bit late ${this.name}`), 2000));
+    }
+
+    sayHi (text) {
+        console.log(text);
+    }
+
+    async sayHiLater () {
+        this.sayHi(await this.waitUntilSayHi());
     }
 }
