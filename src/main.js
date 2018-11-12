@@ -1,4 +1,3 @@
-import '@babel/polyfill';
 import Hello from './Hello';
 
 export default class Yolo {

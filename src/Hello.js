@@ -1,4 +1,3 @@
-
 export default class Hello {
 
     constructor (name) {
