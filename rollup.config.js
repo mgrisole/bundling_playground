@@ -1,23 +1,24 @@
 import babel from 'rollup-plugin-babel';
 import serve from 'rollup-plugin-serve';
-import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import {terser} from "rollup-plugin-terser";
+import typescript from 'rollup-plugin-typescript2';
 
 export default [{
-    input: './src/main.js',
+    input: './src/main.ts',
     output: {
         file: 'dist/bundle.js',
         name: 'Hello',
         format: 'umd'
     },
     plugins: [
-        resolve(),
-        // commonjs(),
+        typescript(),
+        commonjs(),
         babel({
-            exclude: 'node_modules/**'
+            exclude: 'node_modules/**',
+            extensions: ['.js', '.jsx', '.ts', '.tsx'],
         }),
-        // terser(),
-        // serve({ contentBase: ['dist', 'docs'] }),
+        terser(),
+        serve({ contentBase: ['dist', 'docs'] }),
     ]
 }]

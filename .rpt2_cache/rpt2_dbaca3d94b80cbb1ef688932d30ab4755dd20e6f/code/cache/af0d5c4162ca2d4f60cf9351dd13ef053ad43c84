@@ -1,0 +1,1 @@
+{"code":"import Hello from \"./Hello\";\r\nvar Yolo = /** @class */ (function () {\r\n    function Yolo() {\r\n    }\r\n    Yolo.prototype.run = function () {\r\n        var a = new Hello(\"Mark\");\r\n        a.sayHi(\"Hi Mark\");\r\n        a.sayHiLater();\r\n    };\r\n    return Yolo;\r\n}());\r\nexport default Yolo;\r\n"}

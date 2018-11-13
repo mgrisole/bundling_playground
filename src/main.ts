@@ -1,13 +1,13 @@
-import Hello from './Hello';
+import Hello from "./HelloTyped";
 
 export default class Yolo {
 
-    constructor () {}
+    constructor() {}
 
-    public run () {
-        let a = new Hello('Mark');
+    public run() {
+        let a = new Hello("Mark");
 
-        a.sayHi('Hi Mark');
+        a.sayHi("Hi Mark");
         a.sayHiLater();
     }
 }
