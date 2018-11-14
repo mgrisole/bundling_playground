@@ -5,10 +5,10 @@ import {terser} from "rollup-plugin-terser";
 import typescript from 'rollup-plugin-typescript2';
 
 export default [{
-    input: './src/main.ts',
+    input: './src/Typograph.ts',
     output: {
-        file: 'dist/bundle.js',
-        name: 'Hello',
+        file: 'dist/Typograph.js',
+        name: 'Typograph',
         format: 'umd'
     },
     plugins: [

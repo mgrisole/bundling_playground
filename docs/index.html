@@ -10,10 +10,17 @@
     <div class="typeMe">test git</div>
     <div class="typeMe">Yo man, could you type me please ?</div>
 
-    <script src="../bundle.js" charset="utf-8"></script>
+    <script src="../Typograph.js" charset="utf-8"></script>
     <script>
-        const a = new Hello();
-        a.run();
+        const typed = new Typograph({
+          keyboard: 'azerty',
+          selector: '.typeMe',
+          mistype: true,
+          speed: 100
+        });
+
+        typed.type();
+
     </script>
   </body>
 </html>

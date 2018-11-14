@@ -1,1 +1,0 @@
-{"code":"import Hello from \"./HelloTyped\";\r\nexport default class Yolo {\r\n    constructor() { }\r\n    run() {\r\n        let a = new Hello(\"Mark\");\r\n        a.sayHi(\"Hi Mark\");\r\n        a.sayHiLater();\r\n    }\r\n}\r\n"}

@@ -1,4 +1,4 @@
-import Typograph from '../dist/Typograph';
+import Typograph from '../dist/bundle';
 
 const typed = new Typograph({
   keyboard: 'azerty',
