@@ -1,4 +1,4 @@
-import { KeyboardsNames } from './Keyboards';
+import { KeyboardsNames } from "./Keyboards";
 export default interface InterfaceParams {
     selector: string;
     speed?: number;

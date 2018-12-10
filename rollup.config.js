@@ -9,15 +9,16 @@ export default [{
     output: {
         file: 'dist/Typograph.js',
         name: 'Typograph',
-        format: 'umd'
+        format: 'umd',
+        sourcemap: true
     },
     plugins: [
         typescript(),
         commonjs(),
-        babel({
-            exclude: 'node_modules/**',
-            extensions: ['.js', '.jsx', '.ts', '.tsx'],
-        }),
+        // babel({
+        //     exclude: 'node_modules/**',
+        //     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        // }),
         terser(),
         serve({ contentBase: ['dist', 'docs'] }),
     ]

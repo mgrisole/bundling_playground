@@ -1,4 +1,4 @@
-import InterfaceParams from './TypographParamsInterface';
+import InterfaceParams from "./TypographParamsInterface";
 export default class Typograph {
     private sequences;
     private params;

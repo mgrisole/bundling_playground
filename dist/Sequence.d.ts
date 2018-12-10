@@ -7,9 +7,10 @@ export default class Sequence {
     private keyboard;
     private speed;
     private mistype;
+    private mistypeRate;
     private text;
     private mistypeTag;
-    constructor(text: string, target: Element, keyboard: string[], speed: number, mistype: boolean);
+    constructor(text: string, target: Element, keyboard: string[], speed: number, mistype: boolean, mistypeRate: number);
     write(): Promise<InterfaceMistype[]>;
     private typeLetter;
     private removeLetter;

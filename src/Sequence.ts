@@ -6,7 +6,7 @@ interface InterfaceMistype {
 export default class Sequence {
 
   private text: string[];
-  private mistypeTag = document.createElement('mistype');
+  private mistypeTag = document.createElement("mistype");
 
   constructor(
     text: string,
@@ -14,6 +14,7 @@ export default class Sequence {
     private keyboard: string[],
     private speed: number,
     private mistype: boolean,
+    private mistypeRate: number,
   ) {
     this.text = Array.prototype.slice.call(text);
   }
@@ -23,19 +24,28 @@ export default class Sequence {
     while (this.text.length || mistypes.length) {
       const rand = Math.random();
       const speed = this.speed;
-      const mistyped = this.mistype && this.target.textContent!.length && rand > 0.6;
+      const mistyped = this.mistype && this.target.textContent!.length && rand < this.mistypeRate;
       let tag = this.target;
 
       if (this.text.length && (mistyped || !mistypes.length)) {
-        const letter = this.text.shift()!;
+        let letter = this.text.shift()!;
         if (mistyped) {
           tag = this.mistypeTag;
           mistypes.unshift({
             index: this.target.textContent!.length,
             letter,
           });
+
+          const keyboardLine = this.keyboard.filter((e: string) => e.indexOf(letter) >= 0);
+          console.log(this.keyboard);
+          console.log(keyboardLine);
+          const letterPosition = keyboardLine.indexOf(letter.toLowerCase());
+          // wrongChar = sibbling letter (ex: if t then r or y)
+          // IF first or last letter of the line
+          // THEN wrongChar = first letter +1 or last letter -1 (ex: if q then w or if n then b)
+          letter = keyboardLine[letterPosition + (Math.round(Math.random()) ? 1 : -1)];
         }
-        this.target.textContent += await this.typeLetter(speed, mistyped ? '@' : letter);
+        this.target.textContent += await this.typeLetter(speed, letter);
       } else {
         while (mistypes.length) {
           this.text.unshift(await this.removeLetter(speed, mistypes.shift()!));
