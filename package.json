@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "rollup -c",
-    "serve": "rollup -c -w --environment dev:true"
+    "serve": "rollup -c -w --environment dev:true",
+    "serve_ie": "rollup -c -w --environment dev_ie:true"
   },
   "keywords": [],
   "author": "",
