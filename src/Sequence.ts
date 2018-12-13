@@ -44,7 +44,12 @@ export default class Sequence {
           // wrongChar = sibbling letter (ex: if t then r or y)
           // IF first or last letter of the line
           // THEN wrongChar = first letter +1 or last letter -1 (ex for qwerty: if q then w or if n then b)
-          letter = keyboardLine[letterPosition + (Math.round(Math.random()) ? 1 : -1)];
+          letter = keyboardLine[
+            letterPosition +
+            (!letterPosition ? 1 :
+              letterPosition + 1 === keyboardLine.length ? -1 : (Math.round(Math.random()) ? 1 : -1)
+            )
+          ];
         }
         this.target.textContent += await this.typeLetter(speed, letter);
       } else {
