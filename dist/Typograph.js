@@ -64,23 +64,23 @@
                   let tag = this.target;
                   if (this.text.length && (mistyped || !mistypes.length)) {
                       let letter = this.text.shift();
-                      const charCode = letter.charCodeAt(0);
-                      if (mistyped && charCode > 96 && charCode < 123) {
+                      if (mistyped) {
+                          const charCode = letter.charCodeAt(0);
                           tag = this.mistypeTag;
                           mistypes.unshift({
                               index: this.target.textContent.length,
                               letter,
                           });
-                          const keyboardLine = this.keyboard.filter((e) => e.indexOf(letter) >= 0).shift();
-                          console.log(this.keyboard);
-                          console.log(keyboardLine);
-                          const letterPosition = keyboardLine.indexOf(letter.toLowerCase());
-                          // wrongChar = sibbling letter (ex: if t then r or y)
-                          // IF first or last letter of the line
-                          // THEN wrongChar = first letter +1 or last letter -1 (ex for qwerty: if q then w or if n then b)
-                          letter = keyboardLine[letterPosition +
-                              (!letterPosition ? 1 :
-                                  letterPosition + 1 === keyboardLine.length ? -1 : (Math.round(Math.random()) ? 1 : -1))];
+                          if (charCode > 96 && charCode < 123) {
+                              const keyboardLine = this.keyboard.filter((e) => e.indexOf(letter) >= 0).shift();
+                              const letterPosition = keyboardLine.indexOf(letter.toLowerCase());
+                              // wrongChar = sibbling letter (ex: if t then r or y)
+                              // IF first or last letter of the line
+                              // THEN wrongChar = first letter +1 or last letter -1 (ex for qwerty: if q then w or if n then b)
+                              letter = keyboardLine[letterPosition +
+                                  (!letterPosition ? 1 :
+                                      letterPosition + 1 === keyboardLine.length ? -1 : (Math.round(Math.random()) ? 1 : -1))];
+                          }
                       }
                       this.target.textContent += yield this.typeLetter(speed, letter);
                   }
