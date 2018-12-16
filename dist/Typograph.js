@@ -45,44 +45,49 @@
   }
 
   class Sequence {
-      constructor(text, target, keyboard, speed, mistype, mistypeRate) {
+      constructor(text, target, textNode = Text.arguments, keyboard, speed, mistype, mistypeRate) {
           this.target = target;
+          this.textNode = textNode;
           this.keyboard = keyboard;
           this.speed = speed;
           this.mistype = mistype;
           this.mistypeRate = mistypeRate;
-          this.mistypeTag = document.createElement("mistype");
+          this.mistypeElement = document.createElement("mistype");
           this.text = Array.prototype.slice.call(text);
       }
       write() {
           return __awaiter(this, void 0, void 0, function* () {
+              console.log(this.textNode);
               const mistypes = [];
               while (this.text.length || mistypes.length) {
                   const rand = Math.random();
                   const speed = this.speed;
-                  const mistyped = this.mistype && this.target.textContent.length && rand < this.mistypeRate;
-                  let tag = this.target;
+                  const mistyped = this.mistype && this.textNode.length && rand < this.mistypeRate;
+                  let element = this.target;
                   if (this.text.length && (mistyped || !mistypes.length)) {
                       let letter = this.text.shift();
                       if (mistyped) {
                           const charCode = letter.charCodeAt(0);
-                          tag = this.mistypeTag;
+                          // tag = this.mistypeTag;
+                          if (!this.target.querySelector("mistype")) {
+                              this.target.appendChild(this.mistypeElement);
+                          }
                           mistypes.unshift({
-                              index: this.target.textContent.length,
+                              index: this.textNode.length,
                               letter,
                           });
                           if (charCode > 96 && charCode < 123) {
                               const keyboardLine = this.keyboard.filter((e) => e.indexOf(letter) >= 0).shift();
                               const letterPosition = keyboardLine.indexOf(letter.toLowerCase());
-                              // wrongChar = sibbling letter (ex: if t then r or y)
-                              // IF first or last letter of the line
-                              // THEN wrongChar = first letter +1 or last letter -1 (ex for qwerty: if q then w or if n then b)
+                              /* wrongChar = sibbling letter (ex: if t then r or y)
+                              IF first or last letter of the line
+                              THEN wrongChar = first letter +1 or last letter -1 (ex for qwerty: if q then w or if n then b) */
                               letter = keyboardLine[letterPosition +
                                   (!letterPosition ? 1 :
                                       letterPosition + 1 === keyboardLine.length ? -1 : (Math.round(Math.random()) ? 1 : -1))];
                           }
                       }
-                      this.target.textContent += yield this.typeLetter(speed, letter);
+                      this.textNode.nodeValue += yield this.typeLetter(speed, letter);
                   }
                   else {
                       while (mistypes.length) {
@@ -98,11 +103,12 @@
       }
       removeLetter(t, mistype) {
           return new Promise((resolve) => setTimeout(() => {
-              this.target.textContent = this.target.textContent.slice(0, -1);
+              this.textNode.nodeValue = this.textNode.nodeValue.slice(0, -1);
               resolve(mistype.letter);
           }, t));
       }
   }
+  //# sourceMappingURL=Sequence.js.map
 
   class Typograph {
       constructor(p) {
@@ -115,13 +121,13 @@
       }
       initSequences() {
           return Array.from(document.querySelectorAll(this.params.selector)).map((el) => {
-              const sequence = new Sequence(this.params.text || el.getAttribute("data-typeit") || el.textContent || "", el, keyboards[this.params.keyboard || "qwerty"], this.params.speed, this.params.mistype, this.params.mistypeRate);
-              el.textContent = "";
+              const sequence = new Sequence(this.params.text || el.getAttribute("data-typeit") || el.firstChild.nodeValue || "", el, el.insertBefore(document.createTextNode(""), el.firstChild), keyboards[this.params.keyboard || "qwerty"], this.params.speed, this.params.mistype, this.params.mistypeRate);
+              console.log(el);
+              el.firstChild.nodeValue = "";
               return sequence;
           });
       }
   }
-  //# sourceMappingURL=Typograph.js.map
 
   return Typograph;
 

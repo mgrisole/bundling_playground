@@ -4,13 +4,14 @@ interface InterfaceMistype {
 }
 export default class Sequence {
     private target;
+    private textNode;
     private keyboard;
     private speed;
     private mistype;
     private mistypeRate;
     private text;
-    private mistypeTag;
-    constructor(text: string, target: Element, keyboard: string[], speed: number, mistype: boolean, mistypeRate: number);
+    private mistypeElement;
+    constructor(text: string, target: Element, textNode: any, keyboard: string[], speed: number, mistype: boolean, mistypeRate: number);
     write(): Promise<InterfaceMistype[]>;
     private typeLetter;
     private removeLetter;

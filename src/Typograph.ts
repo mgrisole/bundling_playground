@@ -23,14 +23,17 @@ export default class Typograph {
   private initSequences(): Sequence[] {
     return Array.from(document.querySelectorAll(this.params.selector)).map((el: Element) => {
       const sequence = new Sequence(
-        this.params.text || el.getAttribute("data-typeit") || el.textContent || "",
+        this.params.text || el.getAttribute("data-typeit") || el.firstChild!.nodeValue || "",
         el,
+        el.insertBefore(document.createTextNode(""), el.firstChild),
         keyboards[this.params.keyboard || "qwerty"],
         this.params.speed!,
         this.params.mistype!,
         this.params.mistypeRate!,
       );
-      el.textContent = "";
+      console.log(el);
+
+      el.firstChild!.nodeValue = "";
       return sequence;
     });
   }
