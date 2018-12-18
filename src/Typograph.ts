@@ -9,7 +9,6 @@ export default class Typograph {
   constructor(p: InterfaceParams) {
     this.params = {
       ...p,
-      mistype: !!p.mistype,
       mistypeRate: p.mistypeRate || 0.3,
       speed: p.speed || 250,
     };
@@ -22,14 +21,15 @@ export default class Typograph {
 
   private initSequences(): Sequence[] {
     return Array.from(document.querySelectorAll(this.params.selector)).map((el: Element) => {
-      const text = el.firstChild!.nodeValue;
+      const text = el.firstChild && el.firstChild.nodeType === 3 ? el.firstChild.nodeValue : "";
       const sequence = new Sequence(
-        this.params.text || el.getAttribute("data-typeit") || text || "",
+        this.params.text || el.getAttribute("data-typeit") || text!,
         el,
         keyboards[this.params.keyboard || "qwerty"],
         this.params.speed!,
-        this.params.mistype!,
+        !!this.params.mistype,
         this.params.mistypeRate!,
+        !!this.params.selectBeforeErase,
       );
       return sequence;
     });

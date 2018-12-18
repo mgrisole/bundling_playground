@@ -45,12 +45,13 @@
   }
 
   class Sequence {
-      constructor(text, target, keyboard, speed, mistype, mistypeRate) {
+      constructor(text, target, keyboard, speed, mistype, mistypeRate, selectBeforeErase) {
           this.target = target;
           this.keyboard = keyboard;
           this.speed = speed;
           this.mistype = mistype;
           this.mistypeRate = mistypeRate;
+          this.selectBeforeErase = selectBeforeErase;
           this.mistypeElement = document.createElement("mistype");
           this.text = Array.prototype.slice.call(text);
           this.textNode = document.createTextNode("");
@@ -91,7 +92,7 @@
                   }
                   else {
                       while (mistypes.length) {
-                          this.text.unshift(yield this.removeLetter(speed, mistypes.shift()));
+                          this.finalTextNode.nodeValue = yield this.removeLetter(speed, mistypes.shift());
                       }
                       this.finalTextNode = this.textNode;
                       this.mistypeElement.remove();
@@ -100,21 +101,22 @@
               return mistypes;
           });
       }
-      typeLetter(t, letter) {
-          return new Promise((resolve) => setTimeout(() => resolve(letter), t));
+      typeLetter(delay, letter) {
+          return new Promise((resolve) => setTimeout(() => resolve(letter), delay));
       }
-      removeLetter(t, mistype) {
+      removeLetter(delay, mistype) {
           return new Promise((resolve) => setTimeout(() => {
-              this.finalTextNode.nodeValue = this.finalTextNode.nodeValue.slice(0, -1);
-              resolve(mistype.letter);
-          }, t));
+              this.text.unshift(mistype.letter);
+              resolve(this.finalTextNode.nodeValue.slice(0, -1));
+          }, delay));
       }
   }
+  //# sourceMappingURL=Sequence.js.map
 
   class Typograph {
       constructor(p) {
           this.sequences = [];
-          this.params = Object.assign({}, p, { mistype: !!p.mistype, mistypeRate: p.mistypeRate || 0.3, speed: p.speed || 250 });
+          this.params = Object.assign({}, p, { mistypeRate: p.mistypeRate || 0.3, speed: p.speed || 250 });
       }
       type(callback) {
           this.sequences = this.initSequences();
@@ -122,8 +124,8 @@
       }
       initSequences() {
           return Array.from(document.querySelectorAll(this.params.selector)).map((el) => {
-              const text = el.firstChild.nodeValue;
-              const sequence = new Sequence(this.params.text || el.getAttribute("data-typeit") || text || "", el, keyboards[this.params.keyboard || "qwerty"], this.params.speed, this.params.mistype, this.params.mistypeRate);
+              const text = el.firstChild && el.firstChild.nodeType === 3 ? el.firstChild.nodeValue : "";
+              const sequence = new Sequence(this.params.text || el.getAttribute("data-typeit") || text, el, keyboards[this.params.keyboard || "qwerty"], this.params.speed, !!this.params.mistype, this.params.mistypeRate, !!this.params.selectBeforeErase);
               return sequence;
           });
       }

@@ -17,6 +17,7 @@ export default class Sequence {
     private speed: number,
     private mistype: boolean,
     private mistypeRate: number,
+    private selectBeforeErase: boolean,
   ) {
     this.text = Array.prototype.slice.call(text);
     this.textNode = document.createTextNode("");
@@ -62,7 +63,7 @@ export default class Sequence {
         this.finalTextNode.nodeValue += await this.typeLetter(speed, letter);
       } else {
         while (mistypes.length) {
-          this.text.unshift(await this.removeLetter(speed, mistypes.shift()!));
+          this.finalTextNode.nodeValue = await this.removeLetter(speed, mistypes.shift()!);
         }
         this.finalTextNode = this.textNode;
         this.mistypeElement.remove();
@@ -72,14 +73,14 @@ export default class Sequence {
     return mistypes;
   }
 
-  private typeLetter(t: number, letter: string): Promise<string> {
-    return new Promise((resolve: (letter: string) => void) => setTimeout(() => resolve(letter!), t));
+  private typeLetter(delay: number, letter: string): Promise<string> {
+    return new Promise((resolve: (letter: string) => void) => setTimeout(() => resolve(letter!), delay));
   }
 
-  private removeLetter(t: number, mistype: InterfaceMistype): Promise<string> {
+  private removeLetter(delay: number, mistype: InterfaceMistype): Promise<string> {
     return new Promise((resolve: (letter: string) => void) => setTimeout(() => {
-      this.finalTextNode.nodeValue = this.finalTextNode.nodeValue!.slice(0, -1);
-      resolve(mistype.letter);
-    }, t));
+      this.text.unshift(mistype.letter);
+      resolve(this.finalTextNode.nodeValue!.slice(0, -1));
+    }, delay));
   }
 }
