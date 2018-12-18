@@ -7,40 +7,41 @@ export default class Sequence {
 
   private text: string[];
   private mistypeElement = document.createElement("mistype");
+  private finalTextNode: Text;
+  private textNode: Text;
 
   constructor(
     text: string,
     private target: Element,
-    private textNode = Text.arguments,
     private keyboard: string[],
     private speed: number,
     private mistype: boolean,
     private mistypeRate: number,
   ) {
     this.text = Array.prototype.slice.call(text);
+    this.textNode = document.createTextNode("");
+    this.finalTextNode = this.textNode;
   }
 
   public async write() {
-    console.log(this.textNode);
-
     const mistypes: InterfaceMistype[] = [];
+    this.target.insertBefore(this.textNode, this.target.firstChild);
     while (this.text.length || mistypes.length) {
       const rand = Math.random();
       const speed = this.speed;
-      const mistyped = this.mistype && this.textNode!.length && rand < this.mistypeRate;
-      let element = this.target;
+      const mistyped = this.mistype && this.finalTextNode!.length && rand < this.mistypeRate;
 
       if (this.text.length && (mistyped || !mistypes.length)) {
         let letter = this.text.shift()!;
         if (mistyped) {
           const charCode = letter.charCodeAt(0);
-          // tag = this.mistypeTag;
           if (!this.target.querySelector("mistype")) {
-            this.target.appendChild(this.mistypeElement);
+            this.textNode.after(this.mistypeElement);
+            this.finalTextNode = this.mistypeElement.appendChild(document.createTextNode(""));
           }
 
           mistypes.unshift({
-            index: this.textNode!.length,
+            index: this.finalTextNode!.length,
             letter,
           });
 
@@ -58,11 +59,13 @@ export default class Sequence {
             ];
           }
         }
-        this.textNode.nodeValue += await this.typeLetter(speed, letter);
+        this.finalTextNode.nodeValue += await this.typeLetter(speed, letter);
       } else {
         while (mistypes.length) {
           this.text.unshift(await this.removeLetter(speed, mistypes.shift()!));
         }
+        this.finalTextNode = this.textNode;
+        this.mistypeElement.remove();
       }
     }
 
@@ -75,7 +78,7 @@ export default class Sequence {
 
   private removeLetter(t: number, mistype: InterfaceMistype): Promise<string> {
     return new Promise((resolve: (letter: string) => void) => setTimeout(() => {
-      this.textNode.nodeValue = this.textNode.nodeValue!.slice(0, -1);
+      this.finalTextNode.nodeValue = this.finalTextNode.nodeValue!.slice(0, -1);
       resolve(mistype.letter);
     }, t));
   }
