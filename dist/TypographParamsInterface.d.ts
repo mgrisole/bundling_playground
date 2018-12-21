@@ -5,6 +5,7 @@ export default interface InterfaceParams {
     fixePosition?: boolean;
     cursor?: string;
     mistype?: boolean;
+    selectBeforeErase?: boolean;
     keyboard?: keyof typeof KeyboardsNames;
     mistypeRate?: number;
     humanize?: boolean;

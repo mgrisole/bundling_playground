@@ -22,6 +22,7 @@ export default class Typograph {
   private initSequences(): Sequence[] {
     return Array.from(document.querySelectorAll(this.params.selector)).map((el: Element) => {
       const text = el.firstChild && el.firstChild.nodeType === 3 ? el.firstChild.nodeValue : "";
+      if (el.firstChild && text!.length > 1) { el.firstChild.nodeValue = ""; }
       const sequence = new Sequence(
         this.params.text || el.getAttribute("data-typeit") || text!,
         el,

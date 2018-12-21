@@ -1,6 +1,7 @@
 interface InterfaceMistype {
   index: number;
   letter: string;
+  wrongChar: string;
 }
 
 export default class Sequence {
@@ -41,9 +42,10 @@ export default class Sequence {
             this.finalTextNode = this.mistypeElement.appendChild(document.createTextNode(""));
           }
 
-          mistypes.unshift({
+          mistypes.push({
             index: this.finalTextNode!.length,
             letter,
+            wrongChar: letter,
           });
 
           if (charCode > 96 && charCode < 123) {
@@ -58,18 +60,21 @@ export default class Sequence {
                 letterPosition + 1 === keyboardLine.length ? -1 : (Math.round(Math.random()) ? 1 : -1)
               )
             ];
+            mistypes[0].wrongChar = letter;
           }
         }
         this.finalTextNode.nodeValue += await this.typeLetter(speed, letter);
       } else {
-        while (mistypes.length) {
-          this.finalTextNode.nodeValue = await this.removeLetter(speed, mistypes.shift()!);
+        if (this.selectBeforeErase && mistypes.length > 1) {
+          const hl = this.mistypeElement.appendChild(document.createElement("hl"));
+          while (mistypes.length) { hl.textContent += await this.highLightLetter(speed, mistypes.pop()!); }
+        } else {
+        while (mistypes.length) { this.finalTextNode.nodeValue = await this.removeLetter(speed, mistypes.pop()!); }
         }
         this.finalTextNode = this.textNode;
         this.mistypeElement.remove();
       }
     }
-
     return mistypes;
   }
 
@@ -81,6 +86,14 @@ export default class Sequence {
     return new Promise((resolve: (letter: string) => void) => setTimeout(() => {
       this.text.unshift(mistype.letter);
       resolve(this.finalTextNode.nodeValue!.slice(0, -1));
+    }, delay));
+  }
+
+  private highLightLetter(delay: number, mistype: InterfaceMistype): Promise<string> {
+    return new Promise((resolve: (letter: string) => void) => setTimeout(() => {
+      this.text.unshift(mistype.letter);
+      this.mistypeElement.firstChild!.nodeValue = this.finalTextNode.firstChild!.nodeValue!.slice(0, -1);
+      resolve(mistype.wrongChar);
     }, delay));
   }
 }

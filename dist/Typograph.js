@@ -73,9 +73,10 @@
                               this.textNode.after(this.mistypeElement);
                               this.finalTextNode = this.mistypeElement.appendChild(document.createTextNode(""));
                           }
-                          mistypes.unshift({
+                          mistypes.push({
                               index: this.finalTextNode.length,
                               letter,
+                              wrongChar: letter,
                           });
                           if (charCode > 96 && charCode < 123) {
                               const keyboardLine = this.keyboard.filter((e) => e.indexOf(letter) >= 0).shift();
@@ -86,13 +87,22 @@
                               letter = keyboardLine[letterPosition +
                                   (!letterPosition ? 1 :
                                       letterPosition + 1 === keyboardLine.length ? -1 : (Math.round(Math.random()) ? 1 : -1))];
+                              mistypes[0].wrongChar = letter;
                           }
                       }
                       this.finalTextNode.nodeValue += yield this.typeLetter(speed, letter);
                   }
                   else {
-                      while (mistypes.length) {
-                          this.finalTextNode.nodeValue = yield this.removeLetter(speed, mistypes.shift());
+                      if (this.selectBeforeErase && mistypes.length > 1) {
+                          const hl = this.mistypeElement.appendChild(document.createElement("hl"));
+                          while (mistypes.length) {
+                              hl.textContent += yield this.highLightLetter(speed, mistypes.pop());
+                          }
+                      }
+                      else {
+                          while (mistypes.length) {
+                              this.finalTextNode.nodeValue = yield this.removeLetter(speed, mistypes.pop());
+                          }
                       }
                       this.finalTextNode = this.textNode;
                       this.mistypeElement.remove();
@@ -110,8 +120,14 @@
               resolve(this.finalTextNode.nodeValue.slice(0, -1));
           }, delay));
       }
+      highLightLetter(delay, mistype) {
+          return new Promise((resolve) => setTimeout(() => {
+              this.text.unshift(mistype.letter);
+              this.mistypeElement.firstChild.nodeValue = this.finalTextNode.firstChild.nodeValue.slice(0, -1);
+              resolve(mistype.wrongChar);
+          }, delay));
+      }
   }
-  //# sourceMappingURL=Sequence.js.map
 
   class Typograph {
       constructor(p) {
@@ -125,6 +141,9 @@
       initSequences() {
           return Array.from(document.querySelectorAll(this.params.selector)).map((el) => {
               const text = el.firstChild && el.firstChild.nodeType === 3 ? el.firstChild.nodeValue : "";
+              if (el.firstChild && text.length > 1) {
+                  el.firstChild.nodeValue = "";
+              }
               const sequence = new Sequence(this.params.text || el.getAttribute("data-typeit") || text, el, keyboards[this.params.keyboard || "qwerty"], this.params.speed, !!this.params.mistype, this.params.mistypeRate, !!this.params.selectBeforeErase);
               return sequence;
           });

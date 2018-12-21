@@ -1,6 +1,7 @@
 interface InterfaceMistype {
     index: number;
     letter: string;
+    wrongChar: string;
 }
 export default class Sequence {
     private target;
@@ -17,5 +18,6 @@ export default class Sequence {
     write(): Promise<InterfaceMistype[]>;
     private typeLetter;
     private removeLetter;
+    private highLightLetter;
 }
 export {};
